@@ -1,0 +1,1379 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+#heynaj-chat-widget {
+position: fixed; bottom: 24px; right: 24px;
+font-family: 'Inter', sans-serif !important;
+z-index: 999999;
+animation: hnWidgetSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 3.5s both;
+--hn-header-color: #1a1a1a;
+--hn-callout-border-color: #ffdc32;
+--hn-callout-bg: #ffffff;
+--hn-window-bg: rgba(255, 255, 255, 0.85);
+--hn-window-border: rgba(255, 255, 255, 0.5);
+--hn-window-shadow: 0 24px 60px rgba(0,0,0,0.12);
+--hn-window-backdrop: blur(25px);
+--hn-window-overlay-backdrop: blur(15px);
+--hn-window-surface-bg: #ffffff;
+--hn-window-powered-bg: #ffffff;
+--hn-window-overlay-bg: rgba(255, 255, 255, 0.95);
+--hn-form-input-bg: rgba(255,255,255,0.6);
+--hn-chat-input-bg: #ffffff;
+--hn-window-radius: 28px;
+--hn-window-border-width: 1px;
+}
+
+@keyframes hnWidgetSlideIn {
+  0% { transform: translateY(50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+#hn-chat-callout {
+position: absolute; bottom: 85px; right: 0;
+background: var(--hn-callout-bg) !important; color: #1a1a1a !important;
+padding: 14px 24px !important; border-radius: 30px !important;
+box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+border: 2px solid var(--hn-callout-border-color) !important; font-size: 14px !important; font-weight: 700 !important;
+white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opacity: 0; visibility: hidden;
+}
+
+.hn-show-callout { opacity: 1 !important; visibility: visible !important; }
+.hn-callout-animate-none { animation: none !important; }
+.hn-callout-animate-breathing { animation: hnCalloutPulse 2s infinite; }
+.hn-callout-animate-float { animation: hnCalloutFloat 3s ease-in-out infinite; }
+.hn-callout-animate-bounce { animation: hnCalloutBounce 1.5s infinite; }
+.hn-callout-animate-glow { animation: hnCalloutGlow 2.2s ease-in-out infinite; }
+
+@keyframes hnCalloutPulse {
+  0% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+  50% { transform: scale(1.03); box-shadow: 0 12px 35px rgba(0,0,0,0.12); }
+  100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+}
+
+@keyframes hnCalloutFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes hnCalloutBounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  70% { transform: translateY(-4px); }
+}
+
+@keyframes hnCalloutGlow {
+  0% { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+  50% { box-shadow: 0 14px 36px rgba(0,0,0,0.16); }
+  100% { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+}
+
+#hn-chat-callout.hn-callout-style-pill { border-radius: 999px !important; }
+#hn-chat-callout.hn-callout-style-rounded-box { border-radius: 18px !important; padding: 16px 20px !important; }
+#hn-chat-callout.hn-callout-style-speech-bubble { border-radius: 22px 22px 10px 22px !important; padding: 14px 20px !important; }
+#hn-chat-callout.hn-callout-style-glass {
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.72) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+#hn-chat-callout.hn-callout-style-outline-tag {
+  border-radius: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px !important;
+  padding: 12px 16px !important;
+}
+
+#hn-chat-bubble {
+width: 68px; height: 68px; background-color: #ffffff !important;
+border-radius: 50% !important; cursor: pointer; box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+display: flex; align-items: center; justify-content: center;
+border: 1px solid rgba(0,0,0,0.05) !important; transition: transform 0.3s ease; overflow: hidden;
+}
+
+#hn-chat-bubble:hover { transform: scale(1.05); }
+#hn-custom-bubble-logo { width: 45px; height: 45px; object-fit: contain; }
+
+#hn-chat-window {
+display: none; width: 380px; height: 600px;
+background: var(--hn-window-bg) !important;
+border-radius: var(--hn-window-radius) !important; box-shadow: var(--hn-window-shadow) !important;
+position: absolute; bottom: 90px; right: 0;
+flex-direction: column; overflow: hidden;
+backdrop-filter: var(--hn-window-backdrop); -webkit-backdrop-filter: var(--hn-window-backdrop);
+border: var(--hn-window-border-width) solid var(--hn-window-border) !important;
+}
+
+#hn-chat-header {
+background: var(--hn-header-color) !important; color: #ffffff !important; padding: 18px 24px !important;
+font-weight: 600 !important; font-size: 16px !important; display: flex; justify-content: space-between; align-items: center; z-index: 10;
+}
+
+.hn-header-actions { display: flex; align-items: center; gap: 14px; }
+.hn-header-icon-btn { background: none; border: none; cursor: pointer; display: flex; padding: 0; transition: transform 0.2s ease;}
+.hn-header-icon-btn svg { width: 18px; height: 18px; fill: #ffffff !important;}
+
+#hn-pre-chat-form { padding: 20px 30px; display: flex; flex-direction: column; gap: 14px; flex: 1; justify-content: center; }
+.hn-form-desc { font-size: 13px; color: #666; text-align: center; margin-bottom: 4px; line-height: 1.4; display: block !important; }
+.hn-form-error { color: #ef4444 !important; font-size: 12px !important; text-align: center; display: none; font-weight: 600 !important; }
+.hn-lead-input { padding: 14px 18px !important; border: 1px solid rgba(0,0,0,0.1) !important; border-radius: 14px !important; background: var(--hn-form-input-bg) !important; font-size: 14px !important; outline: none; transition: 0.3s; }
+#hn-start-chat-btn { background-color: var(--hn-header-color) !important; color: #ffffff !important; padding: 16px !important; border-radius: 14px !important; font-weight: 600 !important; cursor: pointer; border: none !important; transition: 0.2s; }
+#hn-logo-container { text-align: center; margin-top: 15px; display: flex; justify-content: center; width: 100%; }
+.hn-form-logo { width: 45px; height: auto; opacity: 0.9; }
+.hn-disclaimer { font-size: 11px; color: #999; text-align: center; margin-top: 10px; line-height: 1.4; display: block !important; }
+
+#hn-chat-messages { display: none; flex: 1; padding: 24px !important; overflow-y: auto; flex-direction: column; gap: 16px; position: relative;}
+.hn-message { max-width: 85% !important; padding: 14px 18px !important; border-radius: 18px !important; font-size: 14px !important; line-height: 1.6 !important; word-wrap: break-word; white-space: pre-wrap; }
+.hn-message a { color: #2563eb !important; text-decoration: underline !important; font-weight: 600 !important; }
+.hn-user-message { background: var(--hn-header-color) !important; align-self: flex-end !important; color: #ffffff !important; border-bottom-right-radius: 4px !important; }
+.hn-ai-message { background: #ffffff !important; color: #1a1a1a !important; align-self: flex-start !important; border-bottom-left-radius: 4px !important; border: 1px solid rgba(0,0,0,0.05); }
+.hn-promo-message { max-width: 92% !important; padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+.hn-promo-preview-slot { display: none; margin-bottom: 6px; }
+.hn-promo-card {
+  position: relative;
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 22px;
+  box-shadow: 0 14px 36px rgba(15,23,42,0.10);
+  padding: 16px;
+  overflow: hidden;
+}
+.hn-promo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #475569;
+  margin-bottom: 10px;
+}
+.hn-promo-title {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.hn-promo-offer {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+.hn-promo-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+  white-space: pre-wrap;
+}
+.hn-promo-image {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+  margin: 14px 0 12px 0;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+}
+.hn-promo-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.hn-promo-countdown {
+  font-size: 12px;
+  font-weight: 700;
+  color: #92400e;
+  background: #fff7d1;
+  border-radius: 999px;
+  padding: 7px 12px;
+}
+.hn-promo-cta {
+  background: var(--hn-header-color) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 999px !important;
+  padding: 11px 18px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.hn-promo-cta:hover { transform: scale(1.02); }
+.hn-promo-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(15,23,42,0.06);
+  color: #475569;
+  font-size: 15px;
+  cursor: pointer;
+}
+.hn-promo-dismiss:hover { background: rgba(15,23,42,0.12); }
+.hn-typing-indicator { display: flex; gap: 4px; padding: 14px 18px !important; background: #ffffff !important; border-radius: 18px !important; width: fit-content; align-self: flex-start; margin-bottom: 8px; border: 1px solid rgba(0,0,0,0.05); }
+.hn-typing-indicator span { width: 5px; height: 5px; background: #888; border-radius: 50%; animation: hn-bounce 1.4s infinite both; }
+
+@keyframes hn-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+#hn-quick-replies-container { display: none; padding: 10px 24px 15px 24px; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.hn-qr-btn { background: #ffffff; border: 1px solid rgba(0,0,0,0.1); color: #1a1a1a; padding: 8px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.hn-qr-btn:hover { background: var(--hn-header-color); color: #ffffff; }
+
+#hn-chat-input-area { display: none; padding: 15px 16px 10px 16px; gap: 8px; border-top: 1px solid rgba(0,0,0,0.05); align-items: flex-end; background: var(--hn-window-surface-bg);}
+#hn-chat-input {
+    flex: 1; padding: 12px 14px !important; background: var(--hn-chat-input-bg) !important;
+    border: 1px solid rgba(0,0,0,0.1) !important; border-radius: 20px !important;
+    font-size: 14px !important; outline: none; resize: none; overflow: hidden !important;
+    max-height: 120px; font-family: inherit; line-height: 1.4; box-sizing: border-box;
+    -ms-overflow-style: none !important; scrollbar-width: none !important;
+}
+
+#hn-chat-input::-webkit-scrollbar { display: none !important; }
+.hn-icon-btn-mic { background: #f3f4f6 !important; border: none !important; border-radius: 50% !important; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; margin-bottom: 2px;}
+.hn-icon-btn-mic svg { width: 18px; height: 18px; fill: #666; transition: fill 0.2s ease; }
+.hn-icon-btn-mic:hover { background: #fff4ce !important; transform: scale(1.05); }
+.hn-icon-btn-mic:hover svg { fill: #dca800; }
+.hn-icon-btn-send { background: var(--hn-header-color) !important; border: none !important; border-radius: 50% !important; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 2px;}
+
+#hn-powered-by { text-align: center; padding: 8px 0 16px 0; background: var(--hn-window-powered-bg); }
+#hn-powered-by a { color: #888888 !important; font-size: 10px !important; text-decoration: none !important; font-weight: 500 !important; display: flex; align-items: center; justify-content: center; gap: 4px; }
+#hn-powered-by svg { fill: #888; width: 11px; height: 11px; }
+
+#hn-voice-overlay {
+    display: none; position: absolute; top: 60px; left: 0; width: 100%; height: calc(100% - 60px);
+    background: var(--hn-window-overlay-bg); backdrop-filter: var(--hn-window-overlay-backdrop); -webkit-backdrop-filter: var(--hn-window-overlay-backdrop);
+    z-index: 100; flex-direction: column; align-items: center; justify-content: center;
+    animation: hnFadeIn 0.3s ease;
+}
+
+@keyframes hnFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#hn-close-voice-btn { position: absolute; top: 20px; right: 24px; background: none; border: none; cursor: pointer; padding: 8px; border-radius: 50%; background: rgba(0,0,0,0.05); display: flex; transition: 0.2s;}
+#hn-close-voice-btn:hover { background: rgba(0,0,0,0.1); }
+#hn-close-voice-btn svg { width: 16px; height: 16px; fill: #333; }
+.hn-orb-container { position: relative; width: 120px; height: 120px; margin-bottom: 30px; cursor: pointer; }
+.hn-orb {
+    width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffef99, #ffdc32, #dca800);
+    box-shadow: 0 15px 35px rgba(255, 220, 50, 0.4), inset 0 0 20px rgba(255,255,255,0.8);
+    transition: all 0.5s ease;
+}
+.hn-orb-listening { animation: hnOrbListen 1.5s infinite ease-in-out; }
+
+@keyframes hnOrbListen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 220, 50, 0.6); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(255, 220, 50, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 220, 50, 0); }
+}
+
+.hn-orb-thinking {
+    background: radial-gradient(circle at 30% 30%, #a1c4fd, #c2e9fb);
+    animation: hnOrbSpin 2s linear infinite; box-shadow: 0 10px 30px rgba(161, 196, 253, 0.6);
+}
+
+@keyframes hnOrbSpin {
+  100% { transform: rotate(360deg); }
+}
+
+.hn-orb-speaking {
+    background: radial-gradient(circle at 30% 30%, #a1c4fd, #3b82f6, #1d4ed8);
+    animation: hnOrbSpeak 1s infinite alternate ease-in-out; box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+}
+
+@keyframes hnOrbSpeak {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.1); filter: brightness(1.2); box-shadow: 0 20px 50px rgba(59, 130, 246, 0.8); }
+}
+
+#hn-voice-status { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px; letter-spacing: 0.5px;}
+#hn-voice-transcript { font-size: 14px; color: #666; max-width: 80%; text-align: center; min-height: 40px; font-style: italic; line-height: 1.5;}
+#hn-voice-send-btn {
+    display: none; background: var(--hn-header-color) !important; color: #ffffff !important;
+    padding: 12px 28px !important; border-radius: 24px !important;
+    font-weight: 600 !important; cursor: pointer; border: none !important;
+    margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: 0.2s;
+}
+#hn-voice-send-btn:hover { transform: scale(1.05); }
+</style>
+
+<div id="heynaj-chat-widget">
+<div id="hn-chat-callout" class="hn-callout-animate-breathing hn-callout-style-pill" onclick="hnHandleCalloutClick()">Got questions? Chat with us!</div>
+<div id="hn-chat-window">
+<div id="hn-chat-header">
+<div style="display: flex; align-items: center; gap: 8px;">
+<span id="hn-header-title">[AI_NAME]</span>
+</div>
+<div class="hn-header-actions">
+<button class="hn-header-icon-btn" onclick="hnRestartChat()" title="Restart Chat"><svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.95 7.95 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></button>
+<button class="hn-header-icon-btn" onclick="hnToggleChat()" title="Minimize"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+</div>
+</div>
+<div id="hn-pre-chat-form">
+<div id="hn-promo-preview-slot" class="hn-promo-preview-slot"></div>
+<div class="hn-form-desc" id="hn-form-desc-text">Please introduce yourself so we can better assist you today.</div>
+<div id="hn-form-error" class="hn-form-error"></div>
+<input type="text" id="hn-lead-name" class="hn-lead-input" placeholder="Your Name" required>
+<input type="email" id="hn-lead-email" class="hn-lead-input" placeholder="Email Address" required>
+<input type="tel" id="hn-lead-phone" class="hn-lead-input" placeholder="Phone Number" required>
+<button id="hn-start-chat-btn" onclick="hnStartChat()">Start Session</button>
+<div id="hn-logo-container"><img id="hn-form-logo" src="https://res.cloudinary.com/dt5j91krt/image/upload/v1775798166/HeyNaj_Logo_Widget_sfb5pe.png" class="hn-form-logo"></div>
+<div class="hn-disclaimer" id="hn-consent-text">By chatting, you agree to allow us to contact you regarding your inquiry.</div>
+</div>
+
+<div id="hn-chat-messages"></div>
+
+<div id="hn-voice-overlay">
+    <button id="hn-close-voice-btn" onclick="hnCloseVoiceScreen()" title="Return to text chat"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    <div class="hn-orb-container" onclick="hnOrbClicked()">
+        <div id="hn-main-orb" class="hn-orb"></div>
+    </div>
+    <div id="hn-voice-status">Tap orb to start</div>
+    <div id="hn-voice-transcript"></div>
+    <button id="hn-voice-send-btn" onclick="hnSendVoiceNow()">Send Now</button>
+</div>
+
+<div id="hn-quick-replies-container"></div>
+<div id="hn-chat-input-area">
+<textarea id="hn-chat-input" placeholder="Type a message..." rows="1" onkeydown="hnHandleEnter(event)" oninput="hnHandleInput(this)"></textarea>
+<button class="hn-icon-btn-mic" id="hn-mic-btn" style="display: flex;" onclick="hnOpenVoiceScreen()" title="Call AI Agent"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button>
+<button class="hn-icon-btn-send" id="hn-send-btn" style="display: none;" onclick="hnSendMessage()"><svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+</div>
+<div id="hn-powered-by"><a href="https://heynajflow.com" target="_blank"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7v7l9-11h-7z"/></svg> Powered by HeyNaj</a></div>
+</div>
+<div id="hn-chat-bubble" onclick="hnToggleChat()"><img id="hn-custom-bubble-logo" src="https://res.cloudinary.com/dt5j91krt/image/upload/v1775798166/HeyNaj_Logo_Widget_sfb5pe.png" alt="Chat"></div>
+</div>
+
+<script>
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbybNgIc64SnrZQTv4a-c5rTplxrqRPrbxg5oKNLgExdpdt0kr0a2OXco9-inYkdZUg6yg/exec";
+
+const HN_WIDGET_DEFAULTS = {
+    widgetLogoUrl: "https://res.cloudinary.com/dt5j91krt/image/upload/v1775798166/HeyNaj_Logo_Widget_sfb5pe.png",
+    widgetHeaderColor: "#1a1a1a",
+    attentionMode: "callout",
+    widgetWindowLook: "default-glass",
+    widgetWindowStyle: "default",
+    calloutText: "Got questions? Chat with us!",
+    calloutBorderColor: "#ffdc32",
+    calloutAnimation: "breathing",
+    calloutDelaySeconds: 5,
+    calloutStyle: "pill",
+    bookingLink: "",
+    promo: {
+        entryMode: "callout-trigger",
+        type: "promotion",
+        imageUrl: "",
+        title: "",
+        offerDetails: "",
+        description: "",
+        ctaText: "Learn More",
+        ctaType: "external-url",
+        ctaTarget: "",
+        startAt: "",
+        endAt: "",
+        showCountdown: false,
+        dismissible: true,
+        isActive: false
+    },
+    introDisclaimer: "Please introduce yourself so we can better assist you today.",
+    consentDisclaimer: "By chatting, you agree to allow us to contact you regarding your inquiry.",
+    leadCaptureMode: "required",
+    welcomeMessage: "Hi [name]! I am [bot]. How can I help you today?",
+    inactivityTimeoutSeconds: 60,
+    enableVoice: false
+};
+
+let hnChatHistory = [];
+let hnSessionId = Date.now().toString(36);
+let hnUserName = "";
+let hnUserEmail = "";
+let hnUserPhone = "";
+let hnCachedQuickReplies = [];
+let hnDynamicBotName = "[AI_NAME]";
+let hnInactivityTimer;
+let hnRecognition;
+let hnIsRecording = false;
+let hnCurrentAudio = null;
+let hnFullTranscript = "";
+let hnVoiceTimeout;
+let hnWidgetSettings = Object.assign({}, HN_WIDGET_DEFAULTS);
+let hnHasStartedChat = false;
+let hnCalloutTimer = null;
+let hnIsSendingMessage = false;
+let hnVoiceSendLocked = false;
+let hnVoiceUiBusy = false;
+let hnPromoTriggeredOpen = false;
+let hnPromoDismissed = false;
+let hnPromoCountdownTimer = null;
+
+if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    hnRecognition = new SpeechRecognition();
+    hnRecognition.continuous = true;
+    hnRecognition.interimResults = true;
+
+    hnRecognition.onstart = function() {
+        hnIsRecording = true;
+        hnFullTranscript = "";
+        hnVoiceSendLocked = false;
+        hnVoiceUiBusy = false;
+        document.getElementById("hn-main-orb").className = "hn-orb hn-orb-listening";
+        document.getElementById("hn-voice-status").innerText = "Listening...";
+        document.getElementById("hn-voice-transcript").innerText = "";
+        document.getElementById("hn-voice-send-btn").style.display = "none";
+        if (hnCurrentAudio) { hnCurrentAudio.pause(); hnCurrentAudio = null; }
+    };
+
+    hnRecognition.onresult = function(event) {
+        clearTimeout(hnVoiceTimeout);
+        let interimTranscript = "";
+        hnFullTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                hnFullTranscript += event.results[i][0].transcript + " ";
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+
+        const displayText = hnFullTranscript + interimTranscript;
+        const input = document.getElementById("hn-chat-input");
+        document.getElementById("hn-voice-transcript").innerText = displayText;
+        input.value = displayText;
+        hnHandleInput(input);
+
+        if (hnVoiceSendLocked || hnVoiceUiBusy) {
+            document.getElementById("hn-voice-send-btn").style.display = "none";
+            document.getElementById("hn-voice-status").innerText = "Analyzing...";
+            return;
+        }
+
+        if (displayText.trim().length > 0) {
+            document.getElementById("hn-voice-send-btn").style.display = "inline-block";
+        }
+
+        if (!hnVoiceSendLocked && hnFullTranscript.trim().length > 0 && interimTranscript.trim().length === 0) {
+            document.getElementById("hn-voice-status").innerText = "Processing...";
+            hnVoiceTimeout = setTimeout(() => { hnSendVoiceNow(); }, 2500);
+        } else {
+            document.getElementById("hn-voice-status").innerText = "Listening...";
+        }
+    };
+
+    hnRecognition.onerror = function(event) {
+        if (event.error === "not-allowed") {
+            document.getElementById("hn-voice-status").innerText = "Microphone access denied.";
+            setTimeout(() => { hnCloseVoiceScreen(); }, 2000);
+        } else {
+            hnResetOrbState();
+        }
+    };
+
+    hnRecognition.onend = function() { hnIsRecording = false; };
+}
+
+function hnNormalizeWidgetSettings(data) {
+    const incoming = data.widgetSettings || {};
+    const incomingPromo = incoming.promo || data.promo || {};
+    const attentionMode = hnNormalizeAttentionMode(incoming.attentionMode || data.attentionMode || HN_WIDGET_DEFAULTS.attentionMode);
+    const promo = {
+        entryMode: hnNormalizePromoEntryMode(incomingPromo.entryMode || HN_WIDGET_DEFAULTS.promo.entryMode),
+        type: hnNormalizePromoType(incomingPromo.type || HN_WIDGET_DEFAULTS.promo.type),
+        imageUrl: incomingPromo.imageUrl || HN_WIDGET_DEFAULTS.promo.imageUrl,
+        title: incomingPromo.title || HN_WIDGET_DEFAULTS.promo.title,
+        offerDetails: incomingPromo.offerDetails || HN_WIDGET_DEFAULTS.promo.offerDetails,
+        description: incomingPromo.description || HN_WIDGET_DEFAULTS.promo.description,
+        ctaText: incomingPromo.ctaText || HN_WIDGET_DEFAULTS.promo.ctaText,
+        ctaType: hnNormalizePromoCtaType(incomingPromo.ctaType || HN_WIDGET_DEFAULTS.promo.ctaType),
+        ctaTarget: incomingPromo.ctaTarget || HN_WIDGET_DEFAULTS.promo.ctaTarget,
+        startAt: incomingPromo.startAt || HN_WIDGET_DEFAULTS.promo.startAt,
+        endAt: incomingPromo.endAt || HN_WIDGET_DEFAULTS.promo.endAt,
+        showCountdown: incomingPromo.showCountdown === true || String(incomingPromo.showCountdown).toLowerCase() === "true",
+        dismissible: incomingPromo.dismissible !== false && String(incomingPromo.dismissible).toLowerCase() !== "false"
+    };
+    return {
+        widgetLogoUrl: incoming.widgetLogoUrl || data.widgetLogoUrl || HN_WIDGET_DEFAULTS.widgetLogoUrl,
+        attentionMode: attentionMode,
+        widgetHeaderColor: incoming.widgetHeaderColor || data.widgetHeaderColor || HN_WIDGET_DEFAULTS.widgetHeaderColor,
+        widgetWindowLook: hnNormalizeWindowLook(incoming.widgetWindowLook || data.widgetWindowLook || HN_WIDGET_DEFAULTS.widgetWindowLook),
+        widgetWindowStyle: hnNormalizeWindowStyle(incoming.widgetWindowStyle || data.widgetWindowStyle || HN_WIDGET_DEFAULTS.widgetWindowStyle),
+        calloutText: incoming.calloutText || data.calloutText || HN_WIDGET_DEFAULTS.calloutText,
+        calloutBorderColor: incoming.calloutBorderColor || data.calloutBorderColor || HN_WIDGET_DEFAULTS.calloutBorderColor,
+        calloutAnimation: (incoming.calloutAnimation || data.calloutAnimation || HN_WIDGET_DEFAULTS.calloutAnimation).toString().toLowerCase(),
+        calloutDelaySeconds: Number(incoming.calloutDelaySeconds || data.calloutDelaySeconds || HN_WIDGET_DEFAULTS.calloutDelaySeconds) || HN_WIDGET_DEFAULTS.calloutDelaySeconds,
+        calloutStyle: (incoming.calloutStyle || data.calloutStyle || HN_WIDGET_DEFAULTS.calloutStyle).toString().toLowerCase(),
+        bookingLink: data.bookingLink || HN_WIDGET_DEFAULTS.bookingLink,
+        promo: Object.assign({}, promo, {
+            isActive: incomingPromo.isActive === true || String(incomingPromo.isActive).toLowerCase() === "true" || hnIsPromoActive(attentionMode, promo)
+        }),
+        introDisclaimer: incoming.introDisclaimer || data.introDisclaimer || HN_WIDGET_DEFAULTS.introDisclaimer,
+        consentDisclaimer: incoming.consentDisclaimer || data.consentDisclaimer || HN_WIDGET_DEFAULTS.consentDisclaimer,
+        leadCaptureMode: (incoming.leadCaptureMode || data.leadCaptureMode || HN_WIDGET_DEFAULTS.leadCaptureMode).toString().toLowerCase(),
+        welcomeMessage: data.welcomeMessage || HN_WIDGET_DEFAULTS.welcomeMessage,
+        inactivityTimeoutSeconds: Number(data.inactivityTimeoutSeconds || HN_WIDGET_DEFAULTS.inactivityTimeoutSeconds) || HN_WIDGET_DEFAULTS.inactivityTimeoutSeconds,
+        enableVoice: data.enableVoice === true || String(data.enableVoice).toLowerCase() === "true"
+    };
+}
+
+function hnNormalizeAttentionMode(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    if (normalized === "none") return "none";
+    if (normalized === "promotion" || normalized === "promotion spotlight") return "promotion";
+    return "callout";
+}
+
+function hnNormalizePromoEntryMode(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    if (normalized === "always in chat" || normalized === "always-in-chat") return "always-in-chat";
+    return "callout-trigger";
+}
+
+function hnNormalizePromoType(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    if (normalized === "event") return "event";
+    if (normalized === "announcement") return "announcement";
+    return "promotion";
+}
+
+function hnNormalizePromoCtaType(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    const map = {
+        "external url": "external-url",
+        "external-url": "external-url",
+        "booking link": "booking-link",
+        "booking-link": "booking-link",
+        "start chat prompt": "start-chat-prompt",
+        "start-chat-prompt": "start-chat-prompt"
+    };
+    return map[normalized] || HN_WIDGET_DEFAULTS.promo.ctaType;
+}
+
+function hnHasPromoContent(promo) {
+    if (!promo) return false;
+    return !!((promo.title || promo.offerDetails || promo.description || promo.imageUrl || promo.ctaText || "").toString().trim());
+}
+
+function hnParseDateMs(value) {
+    if (!value) return NaN;
+    const parsed = new Date(value);
+    return isNaN(parsed.getTime()) ? NaN : parsed.getTime();
+}
+
+function hnIsPromoActive(attentionMode, promo) {
+    if (attentionMode !== "promotion") return false;
+    if (!promo || !hnHasPromoContent(promo)) return false;
+    const now = Date.now();
+    const startAt = hnParseDateMs(promo.startAt);
+    const endAt = hnParseDateMs(promo.endAt);
+    if (!isNaN(startAt) && now < startAt) return false;
+    if (!isNaN(endAt) && now > endAt) return false;
+    return true;
+}
+
+function hnNormalizeWindowLook(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    const map = {
+        "default glass": "default-glass",
+        "default-glass": "default-glass",
+        "solid white": "solid-white",
+        "solid-white": "solid-white",
+        "soft gray": "soft-gray",
+        "soft grey": "soft-gray",
+        "soft-gray": "soft-gray",
+        "soft cream": "soft-cream",
+        "soft-cream": "soft-cream",
+        "soft gold": "soft-gold",
+        "soft-gold": "soft-gold"
+    };
+    return map[normalized] || HN_WIDGET_DEFAULTS.widgetWindowLook;
+}
+
+function hnNormalizeWindowStyle(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    const map = {
+        "default": "default",
+        "square": "square",
+        "soft rounded": "soft-rounded",
+        "soft-rounded": "soft-rounded",
+        "bordered": "bordered",
+        "shadowed": "shadowed"
+    };
+    return map[normalized] || HN_WIDGET_DEFAULTS.widgetWindowStyle;
+}
+
+function hnGetWindowLookTokens(look) {
+    const tokenMap = {
+        "default-glass": {
+            windowBg: "rgba(255, 255, 255, 0.85)",
+            windowBorder: "rgba(255, 255, 255, 0.5)",
+            windowShadow: "0 24px 60px rgba(0,0,0,0.12)",
+            windowBackdrop: "blur(25px)",
+            windowOverlayBackdrop: "blur(15px)",
+            windowSurfaceBg: "rgba(255,255,255,0.92)",
+            windowPoweredBg: "rgba(255,255,255,0.92)",
+            windowOverlayBg: "rgba(255,255,255,0.95)",
+            formInputBg: "rgba(255,255,255,0.6)",
+            chatInputBg: "#ffffff"
+        },
+        "solid-white": {
+            windowBg: "#ffffff",
+            windowBorder: "rgba(15,23,42,0.08)",
+            windowShadow: "0 24px 60px rgba(0,0,0,0.12)",
+            windowBackdrop: "none",
+            windowOverlayBackdrop: "none",
+            windowSurfaceBg: "#ffffff",
+            windowPoweredBg: "#ffffff",
+            windowOverlayBg: "#ffffff",
+            formInputBg: "#ffffff",
+            chatInputBg: "#ffffff"
+        },
+        "soft-gray": {
+            windowBg: "#f4f5f7",
+            windowBorder: "rgba(15,23,42,0.08)",
+            windowShadow: "0 24px 60px rgba(15,23,42,0.12)",
+            windowBackdrop: "none",
+            windowOverlayBackdrop: "none",
+            windowSurfaceBg: "#f8fafc",
+            windowPoweredBg: "#f8fafc",
+            windowOverlayBg: "#f4f5f7",
+            formInputBg: "#ffffff",
+            chatInputBg: "#ffffff"
+        },
+        "soft-cream": {
+            windowBg: "#fff8ed",
+            windowBorder: "rgba(120,53,15,0.10)",
+            windowShadow: "0 24px 60px rgba(120,53,15,0.10)",
+            windowBackdrop: "none",
+            windowOverlayBackdrop: "none",
+            windowSurfaceBg: "#fffcf6",
+            windowPoweredBg: "#fffcf6",
+            windowOverlayBg: "#fff8ed",
+            formInputBg: "#ffffff",
+            chatInputBg: "#ffffff"
+        },
+        "soft-gold": {
+            windowBg: "#fff6d8",
+            windowBorder: "rgba(161,98,7,0.12)",
+            windowShadow: "0 24px 60px rgba(161,98,7,0.12)",
+            windowBackdrop: "none",
+            windowOverlayBackdrop: "none",
+            windowSurfaceBg: "#fffbea",
+            windowPoweredBg: "#fffbea",
+            windowOverlayBg: "#fff6d8",
+            formInputBg: "#ffffff",
+            chatInputBg: "#ffffff"
+        }
+    };
+    return tokenMap[look] || tokenMap[HN_WIDGET_DEFAULTS.widgetWindowLook];
+}
+
+function hnGetWindowStyleTokens(style) {
+    const tokenMap = {
+        "default": {
+            radius: "28px",
+            borderWidth: "1px",
+            shadow: "",
+            border: ""
+        },
+        "square": {
+            radius: "0px",
+            borderWidth: "1px",
+            shadow: "0 18px 40px rgba(0,0,0,0.12)",
+            border: ""
+        },
+        "soft-rounded": {
+            radius: "48px",
+            borderWidth: "1px",
+            shadow: "0 24px 60px rgba(0,0,0,0.12)",
+            border: ""
+        },
+        "bordered": {
+            radius: "24px",
+            borderWidth: "2px",
+            shadow: "0 12px 28px rgba(15,23,42,0.07)",
+            border: "rgba(15,23,42,0.18)"
+        },
+        "shadowed": {
+            radius: "28px",
+            borderWidth: "1px",
+            shadow: "0 30px 80px rgba(0,0,0,0.24)",
+            border: ""
+        }
+    };
+    return tokenMap[style] || tokenMap[HN_WIDGET_DEFAULTS.widgetWindowStyle];
+}
+
+function hnApplyWidgetSettings(settings) {
+    const widget = document.getElementById("heynaj-chat-widget");
+    const callout = document.getElementById("hn-chat-callout");
+    const formLogo = document.getElementById("hn-form-logo");
+    const bubbleLogo = document.getElementById("hn-custom-bubble-logo");
+    const formDesc = document.getElementById("hn-form-desc-text");
+    const consent = document.getElementById("hn-consent-text");
+    const headerTitle = document.getElementById("hn-header-title");
+    const windowLook = hnGetWindowLookTokens(settings.widgetWindowLook);
+    const windowStyle = hnGetWindowStyleTokens(settings.widgetWindowStyle);
+
+    widget.style.setProperty("--hn-header-color", settings.widgetHeaderColor);
+    widget.style.setProperty("--hn-callout-border-color", settings.calloutBorderColor);
+    widget.style.setProperty("--hn-window-bg", windowLook.windowBg);
+    widget.style.setProperty("--hn-window-border", windowLook.windowBorder);
+    widget.style.setProperty("--hn-window-shadow", windowLook.windowShadow);
+    widget.style.setProperty("--hn-window-backdrop", windowLook.windowBackdrop);
+    widget.style.setProperty("--hn-window-overlay-backdrop", windowLook.windowOverlayBackdrop);
+    widget.style.setProperty("--hn-window-surface-bg", windowLook.windowSurfaceBg);
+    widget.style.setProperty("--hn-window-powered-bg", windowLook.windowPoweredBg);
+    widget.style.setProperty("--hn-window-overlay-bg", windowLook.windowOverlayBg);
+    widget.style.setProperty("--hn-form-input-bg", windowLook.formInputBg);
+    widget.style.setProperty("--hn-chat-input-bg", windowLook.chatInputBg);
+    widget.style.setProperty("--hn-window-radius", windowStyle.radius);
+    widget.style.setProperty("--hn-window-border-width", windowStyle.borderWidth);
+    widget.style.setProperty("--hn-window-shadow", windowStyle.shadow || windowLook.windowShadow);
+    widget.style.setProperty("--hn-window-border", windowStyle.border || windowLook.windowBorder);
+
+    if (formLogo) formLogo.src = settings.widgetLogoUrl;
+    if (bubbleLogo) bubbleLogo.src = settings.widgetLogoUrl;
+    if (formDesc) formDesc.innerText = settings.introDisclaimer;
+    if (consent) consent.innerText = settings.consentDisclaimer;
+    if (headerTitle) headerTitle.innerText = hnDynamicBotName;
+
+    hnConfigureAttentionFeature(settings);
+    hnRenderPromoPreview(hnShouldUsePromoEntry());
+    hnUpdateComposerButtons();
+}
+
+function hnConfigureAttentionFeature(settings) {
+    const callout = document.getElementById("hn-chat-callout");
+    if (!callout) return;
+
+    if (settings.attentionMode === "none") {
+        hnHideCallout();
+        return;
+    }
+
+    if (settings.attentionMode === "promotion" && settings.promo && settings.promo.isActive) {
+        if (settings.promo.entryMode === "callout-trigger" && !hnPromoDismissed) {
+            callout.innerText = hnBuildPromoTeaserText(settings.promo);
+            callout.className = "hn-callout-animate-" + settings.calloutAnimation + " hn-callout-style-" + settings.calloutStyle;
+            hnScheduleCallout(settings.calloutDelaySeconds);
+            return;
+        }
+        hnHideCallout();
+        return;
+    }
+
+    callout.innerText = settings.calloutText;
+    callout.className = "hn-callout-animate-" + settings.calloutAnimation + " hn-callout-style-" + settings.calloutStyle;
+    hnScheduleCallout(settings.calloutDelaySeconds);
+}
+
+function hnHideCallout() {
+    clearTimeout(hnCalloutTimer);
+    const callout = document.getElementById("hn-chat-callout");
+    if (!callout) return;
+    callout.classList.remove("hn-show-callout");
+    callout.style.visibility = "hidden";
+    callout.style.opacity = "0";
+}
+
+function hnScheduleCallout(delaySeconds) {
+    clearTimeout(hnCalloutTimer);
+    const callout = document.getElementById("hn-chat-callout");
+    if (!callout) return;
+    callout.classList.remove("hn-show-callout");
+    callout.style.visibility = "";
+    callout.style.opacity = "";
+
+    hnCalloutTimer = setTimeout(() => {
+        const win = document.getElementById("hn-chat-window");
+        if (win && win.style.display !== "flex") {
+            callout.classList.add("hn-show-callout");
+        }
+    }, Math.max(0, Number(delaySeconds) || 0) * 1000);
+}
+
+function hnBuildPromoTeaserText(promo) {
+    const base = (promo.offerDetails || promo.title || promo.ctaText || "Special offer available").toString().trim();
+    return base.length > 34 ? base.substring(0, 31) + "..." : base;
+}
+
+function hnShouldUsePromoEntry() {
+    const promo = hnWidgetSettings.promo;
+    if (hnPromoDismissed || !promo || !promo.isActive || hnWidgetSettings.attentionMode !== "promotion") return false;
+    if (promo.entryMode === "always-in-chat") return true;
+    if (promo.entryMode === "callout-trigger") return hnPromoTriggeredOpen === true;
+    return false;
+}
+
+function hnEscapeHtml(text) {
+    return (text || "").toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function hnFormatPromoTypeLabel(type) {
+    const map = { promotion: "Promotion Spotlight", event: "Upcoming Event", announcement: "Announcement" };
+    return map[type] || "Promotion Spotlight";
+}
+
+function hnBuildPromoCardHtml() {
+    const promo = hnWidgetSettings.promo;
+    if (!promo || !promo.isActive || hnPromoDismissed) return "";
+
+    const title = hnEscapeHtml(promo.title || "");
+    const offer = hnEscapeHtml(promo.offerDetails || "");
+    const desc = hnEscapeHtml(promo.description || "").replace(/\n/g, "<br>");
+    const image = promo.imageUrl ? '<img class="hn-promo-image" src="' + hnEscapeHtml(promo.imageUrl) + '" alt="' + title + '">' : "";
+    const dismissBtn = promo.dismissible ? '<button class="hn-promo-dismiss" onclick="hnDismissPromo(event)" aria-label="Dismiss promotion">×</button>' : "";
+    const countdown = promo.showCountdown && promo.endAt
+        ? '<div class="hn-promo-countdown" data-hn-promo-countdown="' + hnEscapeHtml(promo.endAt) + '">Offer ends soon</div>'
+        : "";
+
+    return ''
+        + '<div class="hn-promo-card">'
+        + dismissBtn
+        + '<div class="hn-promo-badge">📣 ' + hnEscapeHtml(hnFormatPromoTypeLabel(promo.type)) + '</div>'
+        + (title ? '<div class="hn-promo-title">' + title + '</div>' : '')
+        + (offer ? '<div class="hn-promo-offer">' + offer + '</div>' : '')
+        + image
+        + (desc ? '<div class="hn-promo-desc">' + desc + '</div>' : '')
+        + '<div class="hn-promo-footer">'
+        + countdown
+        + '<button class="hn-promo-cta" onclick="hnHandlePromoCta(event)">' + hnEscapeHtml(promo.ctaText || "Learn More") + '</button>'
+        + '</div>'
+        + '</div>';
+}
+
+function hnRefreshPromoCountdowns() {
+    const nodes = document.querySelectorAll("[data-hn-promo-countdown]");
+    if (!nodes.length) return;
+    const now = Date.now();
+    nodes.forEach(node => {
+        const endAt = hnParseDateMs(node.getAttribute("data-hn-promo-countdown"));
+        if (isNaN(endAt)) {
+            node.innerText = "";
+            return;
+        }
+        const diff = endAt - now;
+        if (diff <= 0) {
+            node.innerText = "Offer ended";
+            return;
+        }
+        const totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const parts = [];
+        if (days > 0) parts.push(String(days).padStart(2, "0") + "d");
+        parts.push(String(hours).padStart(2, "0") + "h");
+        parts.push(String(minutes).padStart(2, "0") + "m");
+        parts.push(String(seconds).padStart(2, "0") + "s");
+        node.innerText = "Ends in " + parts.join(" ");
+    });
+}
+
+function hnEnsurePromoCountdownTimer() {
+    clearInterval(hnPromoCountdownTimer);
+    hnRefreshPromoCountdowns();
+    if (document.querySelector("[data-hn-promo-countdown]")) {
+        hnPromoCountdownTimer = setInterval(hnRefreshPromoCountdowns, 1000);
+    }
+}
+
+function hnRenderPromoPreview(shouldShow) {
+    const slot = document.getElementById("hn-promo-preview-slot");
+    if (!slot) return;
+    if (!shouldShow || hnHasStartedChat) {
+        slot.innerHTML = "";
+        slot.style.display = "none";
+        hnEnsurePromoCountdownTimer();
+        return;
+    }
+    slot.innerHTML = hnBuildPromoCardHtml();
+    slot.style.display = slot.innerHTML ? "block" : "none";
+    hnEnsurePromoCountdownTimer();
+}
+
+function hnAppendPromoCard() {
+    const container = document.getElementById("hn-chat-messages");
+    const html = hnBuildPromoCardHtml();
+    if (!container || !html) return;
+    const card = document.createElement("div");
+    card.className = "hn-message hn-ai-message hn-promo-message";
+    card.innerHTML = html;
+    container.appendChild(card);
+    hnEnsurePromoCountdownTimer();
+    hnScrollToBottom();
+}
+
+function hnDismissPromo(event) {
+    if (event) event.stopPropagation();
+    hnPromoDismissed = true;
+    hnPromoTriggeredOpen = false;
+    document.querySelectorAll(".hn-promo-card").forEach(node => {
+        const parent = node.closest(".hn-promo-preview-slot, .hn-promo-message");
+        if (parent && parent.classList.contains("hn-promo-preview-slot")) {
+            parent.innerHTML = "";
+            parent.style.display = "none";
+        } else if (parent) {
+            parent.remove();
+        } else {
+            node.remove();
+        }
+    });
+    const preview = document.getElementById("hn-promo-preview-slot");
+    if (preview) {
+        preview.innerHTML = "";
+        preview.style.display = "none";
+    }
+    hnEnsurePromoCountdownTimer();
+    hnConfigureAttentionFeature(hnWidgetSettings);
+}
+
+function hnHandlePromoCta(event) {
+    if (event) event.stopPropagation();
+    const promo = hnWidgetSettings.promo || {};
+    if (promo.ctaType === "external-url") {
+        if (promo.ctaTarget) window.open(promo.ctaTarget, "_blank", "noopener,noreferrer");
+        return;
+    }
+    if (promo.ctaType === "booking-link") {
+        if (hnWidgetSettings.bookingLink) window.open(hnWidgetSettings.bookingLink, "_blank", "noopener,noreferrer");
+        return;
+    }
+    const prompt = (promo.ctaTarget || ("I want to know more about " + (promo.title || "this offer"))).trim();
+    if (!hnHasStartedChat) {
+        if (hnWidgetSettings.leadCaptureMode === "required") {
+            hnShowFormError("Please start the session first to continue with this offer.");
+            return;
+        }
+        hnBeginChatSession({ skipLeadCapture: true, promoFirst: true, suppressWelcome: true });
+    }
+    const input = document.getElementById("hn-chat-input");
+    input.value = prompt;
+    hnHandleInput(input);
+    hnSendMessage();
+}
+
+function hnBuildWelcomeMessage() {
+    const rawName = (hnUserName || "").trim();
+    const firstName = rawName ? rawName.split(" ")[0] : "";
+    let message = hnWidgetSettings.welcomeMessage || HN_WIDGET_DEFAULTS.welcomeMessage;
+    message = message.replace(/\[bot\]/gi, hnDynamicBotName);
+    message = message.replace(/\[name\]/gi, firstName);
+    message = message.replace(/\s{2,}/g, " ").replace(/\s+!/g, "!").trim();
+    if (message.indexOf("Hi !") === 0) message = message.replace("Hi !", "Hi!");
+    if (!message) message = "Hi! I am " + hnDynamicBotName + ". How can I help you today?";
+    return message;
+}
+
+function hnUpdateComposerButtons() {
+    const input = document.getElementById("hn-chat-input");
+    const micBtn = document.getElementById("hn-mic-btn");
+    const sendBtn = document.getElementById("hn-send-btn");
+    const hasText = !!(input && input.value.trim().length > 0);
+
+    if (hasText) {
+        if (micBtn) micBtn.style.display = "none";
+        if (sendBtn) sendBtn.style.display = "flex";
+        return;
+    }
+
+    if (sendBtn) sendBtn.style.display = "none";
+    if (micBtn) micBtn.style.display = hnWidgetSettings.enableVoice ? "flex" : "none";
+}
+
+function hnOpenVoiceScreen() {
+    if (!hnWidgetSettings.enableVoice) {
+        alert("Voice replies are not enabled for this assistant.");
+        return;
+    }
+    if (!hnRecognition) { alert("Voice recognition is not supported in this browser. Please type your message."); return; }
+    document.getElementById("hn-voice-overlay").style.display = "flex";
+    hnOrbClicked();
+}
+
+function hnCloseVoiceScreen() {
+    document.getElementById("hn-voice-overlay").style.display = "none";
+    if (hnIsRecording) { hnRecognition.stop(); }
+    if (hnCurrentAudio) { hnCurrentAudio.pause(); hnCurrentAudio = null; }
+    hnResetOrbState();
+}
+
+function hnOrbClicked() {
+    if (hnCurrentAudio && !hnCurrentAudio.paused) {
+        hnCurrentAudio.pause();
+        hnCurrentAudio = null;
+        hnResetOrbState();
+        setTimeout(() => { hnRecognition.start(); }, 50);
+        return;
+    }
+
+    if (hnIsRecording) { hnRecognition.stop(); hnResetOrbState(); }
+    else { hnRecognition.start(); }
+}
+
+function hnSendVoiceNow() {
+    clearTimeout(hnVoiceTimeout);
+    if (hnVoiceSendLocked || hnVoiceUiBusy || hnIsSendingMessage) return;
+    if (!document.getElementById("hn-chat-input").value.trim()) {
+        hnResetOrbState();
+        return;
+    }
+
+    hnVoiceSendLocked = true;
+    hnVoiceUiBusy = true;
+    document.getElementById("hn-main-orb").className = "hn-orb hn-orb-thinking";
+    document.getElementById("hn-voice-status").innerText = "Analyzing...";
+    document.getElementById("hn-voice-send-btn").style.display = "none";
+    if (hnIsRecording) { hnRecognition.stop(); }
+    hnSendMessage();
+}
+
+function hnResetOrbState() {
+    document.getElementById("hn-main-orb").className = "hn-orb";
+    document.getElementById("hn-voice-status").innerText = "Tap orb to speak";
+    document.getElementById("hn-voice-send-btn").style.display = "none";
+    hnVoiceUiBusy = false;
+    hnVoiceSendLocked = false;
+}
+
+function hnScrollToBottom() {
+    const container = document.getElementById("hn-chat-messages");
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 30);
+    }
+}
+
+function hnLinkify(text) {
+    const imgRegex = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
+    let htmlText = text.replace(imgRegex, function(fullMatch, altText, imgUrl) {
+        return '<img src="' + imgUrl + '" alt="' + altText + '" style="max-width: 100%; border-radius: 12px; margin-top: 10px; margin-bottom: 5px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: block;" />';
+    });
+    const urlRegex = /(<[^>]+>)|(https?:\/\/[^\s]+)/g;
+    htmlText = htmlText.replace(urlRegex, function(match, htmlTag, url) {
+        if (htmlTag) return htmlTag;
+        if (url) {
+            const cleanUrl = url.replace(/[.,;!?)]+$/, "");
+            const punctuation = url.substring(cleanUrl.length);
+            return '<a href="' + cleanUrl + '" target="_blank">' + cleanUrl + "</a>" + punctuation;
+        }
+    });
+    return htmlText;
+}
+
+function hnShowFormError(message) {
+    const errDiv = document.getElementById("hn-form-error");
+    errDiv.innerText = message;
+    errDiv.style.display = "block";
+    setTimeout(() => { errDiv.style.display = "none"; }, 4000);
+}
+
+function hnAutoGrow(element) {
+    element.style.height = "auto";
+    element.style.height = element.scrollHeight + "px";
+}
+
+function hnHandleInput(element) {
+    hnAutoGrow(element);
+    hnUpdateComposerButtons();
+}
+
+function hnRenderQuickReplies() {
+    const container = document.getElementById("hn-quick-replies-container");
+    if (!container) return;
+
+    container.innerHTML = "";
+    hnCachedQuickReplies.forEach(qr => {
+        const btn = document.createElement("button");
+        btn.className = "hn-qr-btn";
+        btn.innerText = qr;
+        btn.onclick = () => {
+            const input = document.getElementById("hn-chat-input");
+            input.value = qr;
+            hnHandleInput(input);
+            hnSendMessage();
+        };
+        container.appendChild(btn);
+    });
+
+    if (hnHasStartedChat && hnChatHistory.length === 0) {
+        container.style.display = "flex";
+    }
+}
+
+function hnResetInactivityTimer() {
+    clearTimeout(hnInactivityTimer);
+    if (document.getElementById("hn-chat-messages").style.display === "flex" && hnChatHistory.length > 0) {
+        hnInactivityTimer = setTimeout(async () => {
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({
+                        isTimeout: true,
+                        sessionId: hnSessionId
+                    })
+                });
+            } catch (e) {}
+        }, hnWidgetSettings.inactivityTimeoutSeconds * 1000);
+    }
+}
+
+async function hnPreloadSettings() {
+    try {
+        const res = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ type: "get_settings" })
+        });
+        const data = await res.json();
+        hnDynamicBotName = data.botName || hnDynamicBotName;
+        hnWidgetSettings = hnNormalizeWidgetSettings(data);
+        hnApplyWidgetSettings(hnWidgetSettings);
+
+        if (data.quickReplies && data.quickReplies.length > 0) {
+            hnCachedQuickReplies = data.quickReplies;
+            hnRenderQuickReplies();
+        }
+    } catch (e) {
+        hnApplyWidgetSettings(hnWidgetSettings);
+    }
+}
+hnPreloadSettings();
+
+function hnHandleCalloutClick() {
+    const promo = hnWidgetSettings.promo || {};
+    hnPromoTriggeredOpen =
+        hnWidgetSettings.attentionMode === "promotion" &&
+        promo.isActive &&
+        promo.entryMode === "callout-trigger" &&
+        !hnPromoDismissed;
+    hnToggleChat();
+}
+
+function hnToggleChat() {
+    const win = document.getElementById("hn-chat-window");
+    const callout = document.getElementById("hn-chat-callout");
+
+    if (win.style.display === "flex") {
+        win.style.display = "none";
+        hnCloseVoiceScreen();
+        hnPromoTriggeredOpen = false;
+        return;
+    }
+
+    win.style.display = "flex";
+    if (callout) callout.classList.remove("hn-show-callout");
+    hnOpenChatExperience();
+    hnScrollToBottom();
+}
+
+function hnOpenChatExperience() {
+    if (hnHasStartedChat) return;
+    const promoFirst = hnShouldUsePromoEntry();
+
+    if (hnWidgetSettings.leadCaptureMode === "required") {
+        document.getElementById("hn-pre-chat-form").style.display = "flex";
+        document.getElementById("hn-chat-messages").style.display = "none";
+        document.getElementById("hn-chat-input-area").style.display = "none";
+        hnRenderPromoPreview(promoFirst);
+    } else {
+        hnBeginChatSession({ skipLeadCapture: true, promoFirst: promoFirst, suppressWelcome: promoFirst });
+    }
+}
+
+function hnStartChat() {
+    hnBeginChatSession({
+        skipLeadCapture: false,
+        promoFirst: hnShouldUsePromoEntry(),
+        suppressWelcome: hnShouldUsePromoEntry()
+    });
+}
+
+function hnBeginChatSession(options) {
+    if (hnHasStartedChat) return;
+
+    const skipLeadCapture = !!options.skipLeadCapture;
+    const promoFirst = !!options.promoFirst;
+    const suppressWelcome = !!options.suppressWelcome;
+
+    if (skipLeadCapture) {
+        hnUserName = "";
+        hnUserEmail = "";
+        hnUserPhone = "";
+    } else {
+        hnUserName = document.getElementById("hn-lead-name").value.trim();
+        hnUserEmail = document.getElementById("hn-lead-email").value.trim();
+        hnUserPhone = document.getElementById("hn-lead-phone").value.trim();
+
+        if (!hnUserName || hnUserName.length < 2) { hnShowFormError("Please enter your full name."); return; }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(hnUserEmail)) { hnShowFormError("Please enter a valid email address."); return; }
+        const phoneDigits = (hnUserPhone.match(/\d/g) || []).length;
+        if (phoneDigits < 7 || phoneDigits > 15) { hnShowFormError("Please enter a valid phone number (7-15 digits)."); return; }
+    }
+
+    hnHasStartedChat = true;
+    document.getElementById("hn-pre-chat-form").style.display = "none";
+    document.getElementById("hn-chat-messages").style.display = "flex";
+    document.getElementById("hn-chat-input-area").style.display = "flex";
+    hnRenderPromoPreview(false);
+
+    if (hnCachedQuickReplies.length > 0) {
+        hnRenderQuickReplies();
+        document.getElementById("hn-quick-replies-container").style.display = "flex";
+    }
+
+    if (promoFirst) {
+        hnAppendPromoCard();
+    }
+    if (!suppressWelcome) {
+        hnAppendMessage(hnBuildWelcomeMessage(), "ai");
+    }
+    hnPromoTriggeredOpen = false;
+    hnResetInactivityTimer();
+}
+
+function hnAppendMessage(text, sender) {
+    const container = document.getElementById("hn-chat-messages");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "hn-message hn-" + sender + "-message";
+    msgDiv.innerHTML = hnLinkify(text).replace(/\n/g, "<br>");
+    container.appendChild(msgDiv);
+    hnScrollToBottom();
+}
+
+async function hnSendMessage() {
+    if (hnIsSendingMessage) return;
+    const input = document.getElementById("hn-chat-input");
+    const text = input.value.trim();
+    if (!text) return;
+    hnIsSendingMessage = true;
+
+    document.getElementById("hn-quick-replies-container").style.display = "none";
+    hnAppendMessage(text, "user");
+    input.value = "";
+    input.style.height = "auto";
+    hnResetInactivityTimer();
+    hnUpdateComposerButtons();
+
+    const typing = document.createElement("div");
+    typing.id = "hn-typing-indicator";
+    typing.className = "hn-typing-indicator";
+    typing.innerHTML = "<span></span><span></span><span></span>";
+    document.getElementById("hn-chat-messages").appendChild(typing);
+    hnScrollToBottom();
+
+    try {
+        const res = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+                text: text,
+                history: hnChatHistory,
+                sessionId: hnSessionId,
+                userName: hnUserName,
+                userEmail: hnUserEmail,
+                userPhone: hnUserPhone,
+                scrapedContext: window.hnScrapedContext || "",
+                pageUrl: window.location.href,
+                pageTitle: document.title,
+                leadCaptureMode: hnWidgetSettings.leadCaptureMode
+            })
+        });
+        const data = await res.json();
+        const indicator = document.getElementById("hn-typing-indicator");
+        if (indicator) indicator.remove();
+        hnAppendMessage(data.reply, "ai");
+
+        if (data.audioBase64 && document.getElementById("hn-voice-overlay").style.display === "flex") {
+            document.getElementById("hn-main-orb").className = "hn-orb hn-orb-speaking";
+            document.getElementById("hn-voice-status").innerText = "Speaking...";
+            document.getElementById("hn-voice-transcript").innerText = data.reply;
+            document.getElementById("hn-voice-send-btn").style.display = "none";
+            hnVoiceUiBusy = true;
+
+            hnCurrentAudio = new Audio("data:audio/mp3;base64," + data.audioBase64);
+            hnCurrentAudio.onended = function() {
+                hnVoiceUiBusy = false;
+                hnVoiceSendLocked = false;
+                if (document.getElementById("hn-voice-overlay").style.display === "flex") hnResetOrbState();
+            };
+            hnCurrentAudio.play().catch(e => console.log(e));
+        } else {
+            hnVoiceUiBusy = false;
+            hnVoiceSendLocked = false;
+            if (document.getElementById("hn-voice-overlay").style.display === "flex") hnResetOrbState();
+        }
+
+        hnChatHistory.push({ role: "user", parts: [{ text: text }] }, { role: "model", parts: [{ text: data.reply }] });
+        hnResetInactivityTimer();
+    } catch (e) {
+        if (document.getElementById("hn-typing-indicator")) document.getElementById("hn-typing-indicator").remove();
+        hnVoiceUiBusy = false;
+        hnVoiceSendLocked = false;
+        hnResetOrbState();
+    } finally {
+        hnIsSendingMessage = false;
+    }
+}
+
+function hnHandleEnter(e) {
+    hnResetInactivityTimer();
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        hnSendMessage();
+    }
+}
+
+function hnRestartChat() {
+    hnChatHistory = [];
+    hnSessionId = Date.now().toString(36);
+    hnHasStartedChat = false;
+    hnUserName = "";
+    hnUserEmail = "";
+    hnUserPhone = "";
+    hnPromoTriggeredOpen = false;
+    clearTimeout(hnInactivityTimer);
+
+    document.getElementById("hn-chat-messages").innerHTML = "";
+    document.getElementById("hn-chat-messages").style.display = "none";
+    document.getElementById("hn-pre-chat-form").style.display = "flex";
+    document.getElementById("hn-chat-input-area").style.display = "none";
+    document.getElementById("hn-quick-replies-container").style.display = "none";
+    hnRenderPromoPreview(false);
+
+    const input = document.getElementById("hn-chat-input");
+    input.value = "";
+    input.style.height = "auto";
+
+    hnUpdateComposerButtons();
+
+    if (hnWidgetSettings.leadCaptureMode !== "required") {
+        document.getElementById("hn-pre-chat-form").style.display = "none";
+    }
+
+    hnCloseVoiceScreen();
+    hnConfigureAttentionFeature(hnWidgetSettings);
+    if (document.getElementById("hn-chat-window").style.display === "flex") hnOpenChatExperience();
+}
+</script>
