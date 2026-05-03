@@ -19,6 +19,10 @@
     "";
 
   var containerId = "heynaj-widget-loader-root";
+  var mountTargetId =
+    currentScript.getAttribute("data-heynaj-container") ||
+    currentScript.getAttribute("data-widget-container") ||
+    containerId;
   var originalWebhookPattern = /const WEBHOOK_URL = "([^"]+)";/;
 
   function escapeForJsDoubleQuote(value) {
@@ -52,10 +56,10 @@
     var existing = document.getElementById("heynaj-chat-widget");
     if (existing) return;
 
-    var container = document.getElementById(containerId);
+    var container = document.getElementById(mountTargetId);
     if (!container) {
       container = document.createElement("div");
-      container.id = containerId;
+      container.id = mountTargetId;
       document.body.appendChild(container);
     }
 
