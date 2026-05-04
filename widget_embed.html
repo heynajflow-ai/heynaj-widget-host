@@ -1216,6 +1216,12 @@ function hnLinkify(text) {
     let htmlText = text.replace(imgRegex, function(fullMatch, altText, imgUrl) {
         return '<img src="' + imgUrl + '" alt="' + altText + '" style="max-width: 100%; border-radius: 12px; margin-top: 10px; margin-bottom: 5px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: block;" />';
     });
+    const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    htmlText = htmlText.replace(markdownLinkRegex, function(fullMatch, label, url) {
+        return '<a href="' + url + '" target="_blank">' + label + '</a>';
+    });
+    htmlText = htmlText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    htmlText = htmlText.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
     const urlRegex = /(<[^>]+>)|(https?:\/\/[^\s]+)/g;
     htmlText = htmlText.replace(urlRegex, function(match, htmlTag, url) {
         if (htmlTag) return htmlTag;
