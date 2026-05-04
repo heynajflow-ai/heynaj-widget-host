@@ -38,7 +38,7 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 }
 
 .hn-callout-promo {
-  width: min(290px, calc(100vw - 48px));
+  width: min(326px, calc(100vw - 36px));
   padding: 0 !important;
   border-radius: 24px !important;
   white-space: normal !important;
@@ -47,13 +47,13 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 .hn-callout-promo-inner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 10px 12px;
 }
 .hn-callout-promo-media {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   flex: 0 0 auto;
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.06);
@@ -66,44 +66,46 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 .hn-callout-promo-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .hn-callout-promo-content {
   min-width: 0;
   flex: 1;
 }
 .hn-callout-promo-kicker {
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.2;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #64748b;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .hn-callout-promo-title {
-  font-size: 14px;
-  line-height: 1.25;
+  font-size: 13px;
+  line-height: 1.2;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 .hn-callout-promo-copy {
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: 11px;
+  line-height: 1.3;
   font-weight: 700;
   color: #334155;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
 }
 .hn-callout-promo-arrow {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   color: #0f172a;
   flex: 0 0 auto;
