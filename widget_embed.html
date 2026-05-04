@@ -38,22 +38,22 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 }
 
 .hn-callout-promo {
-  width: min(326px, calc(100vw - 36px));
+  width: min(348px, calc(100vw - 24px));
   padding: 0 !important;
-  border-radius: 24px !important;
+  border-radius: 22px !important;
   white-space: normal !important;
   overflow: hidden;
 }
 .hn-callout-promo-inner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 9px 10px 9px 9px;
 }
 .hn-callout-promo-media {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   flex: 0 0 auto;
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.06);
@@ -71,22 +71,23 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 .hn-callout-promo-content {
   min-width: 0;
   flex: 1;
+  padding-right: 2px;
 }
 .hn-callout-promo-kicker {
-  font-size: 9px;
+  font-size: 8px;
   line-height: 1.2;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #64748b;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 .hn-callout-promo-title {
-  font-size: 13px;
-  line-height: 1.2;
+  font-size: 12px;
+  line-height: 1.16;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -94,8 +95,8 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   word-break: break-word;
 }
 .hn-callout-promo-copy {
-  font-size: 11px;
-  line-height: 1.3;
+  font-size: 10px;
+  line-height: 1.24;
   font-weight: 700;
   color: #334155;
   display: -webkit-box;
@@ -105,10 +106,11 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   word-break: break-word;
 }
 .hn-callout-promo-arrow {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1;
   color: #0f172a;
   flex: 0 0 auto;
+  margin-left: 2px;
 }
 
 .hn-show-callout { opacity: 1 !important; visibility: visible !important; }
@@ -517,6 +519,7 @@ let hnVoiceSendLocked = false;
 let hnVoiceUiBusy = false;
 let hnPromoTriggeredOpen = false;
 let hnPromoDismissed = false;
+let hnSettingsLoaded = false;
 let hnPromoCountdownTimer = null;
 
 if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
@@ -861,6 +864,11 @@ function hnApplyWidgetSettings(settings) {
 function hnConfigureAttentionFeature(settings) {
     const callout = document.getElementById("hn-chat-callout");
     if (!callout) return;
+
+    if (!hnSettingsLoaded) {
+        hnHideCallout();
+        return;
+    }
 
     if (settings.attentionMode === "none") {
         hnHideCallout();
@@ -1288,6 +1296,7 @@ async function hnPreloadSettings() {
         const data = await res.json();
         hnDynamicBotName = data.botName || hnDynamicBotName;
         hnWidgetSettings = hnNormalizeWidgetSettings(data);
+        hnSettingsLoaded = true;
         hnApplyWidgetSettings(hnWidgetSettings);
 
         if (data.quickReplies && data.quickReplies.length > 0) {
@@ -1295,6 +1304,7 @@ async function hnPreloadSettings() {
             hnRenderQuickReplies();
         }
     } catch (e) {
+        hnSettingsLoaded = true;
         hnApplyWidgetSettings(hnWidgetSettings);
     }
 }
