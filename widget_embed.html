@@ -13,6 +13,13 @@ animation: hnWidgetSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 3.5s both;
 --hn-callout-glow-strong: rgba(255, 220, 50, 0.34);
 --hn-promo-teaser-glow-soft: rgba(26, 26, 26, 0.18);
 --hn-promo-teaser-glow-strong: rgba(26, 26, 26, 0.32);
+--hn-promo-teaser-radius: 22px;
+--hn-promo-teaser-media-radius: 16px;
+--hn-promo-teaser-image-radius: 12px;
+--hn-promo-card-radius: 22px;
+--hn-promo-countdown-bg: rgba(15, 23, 42, 0.06);
+--hn-promo-countdown-text: #475569;
+--hn-promo-countdown-border: rgba(15, 23, 42, 0.08);
 --hn-callout-bg: #ffffff;
 --hn-window-bg: rgba(255, 255, 255, 0.85);
 --hn-window-border: rgba(255, 255, 255, 0.5);
@@ -44,8 +51,8 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 
 #hn-chat-callout.hn-callout-promo {
   width: min(316px, calc(100vw - 24px));
-  padding: 8px !important;
-  border-radius: 22px !important;
+  padding: 12px 8px 14px !important;
+  border-radius: var(--hn-promo-teaser-radius) !important;
   white-space: normal !important;
   overflow: hidden;
   border: 1.5px solid var(--hn-promo-teaser-border-color) !important;
@@ -55,31 +62,33 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 .hn-callout-promo-inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
+  gap: 16px;
   padding: 0;
+  position: relative;
 }
 .hn-callout-promo-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  display: block;
+  margin-top: 0;
+  padding-top: 3px;
+  padding-left: 5px;
 }
 .hn-callout-promo-content {
   min-width: 0;
-  flex: 1 1 auto;
+  padding-right: 38px;
 }
 .hn-callout-promo-media {
   width: 100%;
-  min-height: 132px;
+  min-height: 134px;
   aspect-ratio: 1.58 / 1;
-  border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(15,23,42,0.06);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 8px 22px rgba(15,23,42,0.08);
+  border-radius: var(--hn-promo-teaser-media-radius);
+  background: transparent;
+  border: none;
+  box-shadow: none;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 0;
   box-sizing: border-box;
 }
 .hn-callout-promo-media img {
@@ -88,7 +97,7 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   object-fit: contain;
   object-position: center;
   display: block;
-  border-radius: 12px;
+  border-radius: var(--hn-promo-teaser-image-radius);
 }
 .hn-callout-promo-media-placeholder {
   background: linear-gradient(135deg, #fff7d1 0%, #ffffff 55%, #f8fafc 100%);
@@ -99,17 +108,18 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 }
 .hn-callout-promo-kicker {
   font-size: 9px;
-  line-height: 1.2;
+  line-height: 1.22;
   font-weight: 800;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   color: #64748b;
   margin-bottom: 4px;
 }
 .hn-callout-promo-title {
   font-size: 16px;
-  line-height: 1.16;
+  line-height: 1.18;
   font-weight: 800;
+  letter-spacing: -0.015em;
   color: #0f172a;
   margin-bottom: 4px;
   display: -webkit-box;
@@ -119,45 +129,61 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   word-break: break-word;
 }
 .hn-callout-promo-copy {
-  font-size: 11.5px;
-  line-height: 1.42;
-  font-weight: 600;
-  color: #334155;
+  font-size: 12px;
+  line-height: 1.48;
+  font-weight: 500;
+  color: #475569;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
 }
-.hn-callout-promo-arrow {
-  width: 30px;
-  height: 30px;
+.hn-callout-promo-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
+  border: none;
   background: rgba(15,23,42,0.08);
   font-size: 18px;
   line-height: 1;
   color: #0f172a;
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 2px;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.hn-callout-promo-close:hover {
+  background: rgba(15,23,42,0.14);
+  transform: scale(1.03);
 }
 @media (max-width: 420px) {
   #hn-chat-callout.hn-callout-promo {
     width: min(300px, calc(100vw - 20px));
-    padding: 7px !important;
-    border-radius: 20px !important;
+    padding: 11px 7px 13px !important;
+    border-radius: var(--hn-promo-teaser-radius) !important;
   }
   .hn-callout-promo-inner {
-    gap: 8px;
+    gap: 14px;
   }
   .hn-callout-promo-media {
     min-height: 120px;
     border-radius: 14px;
   }
+  .hn-callout-promo-content {
+    padding-right: 34px;
+  }
+  .hn-callout-promo-header {
+    padding-top: 2px;
+    padding-left: 4px;
+  }
   .hn-callout-promo-title { font-size: 15px; }
-  .hn-callout-promo-copy { font-size: 10.5px; }
+  .hn-callout-promo-copy { font-size: 11px; line-height: 1.45; }
 }
 
 .hn-show-callout { opacity: 1 !important; visibility: visible !important; }
@@ -188,22 +214,18 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 
 @keyframes hnCalloutGlow {
   0%, 100% {
-    transform: translateY(0);
-    filter: drop-shadow(0 10px 18px var(--hn-callout-glow-soft));
+    filter: drop-shadow(0 12px 20px var(--hn-callout-glow-soft));
   }
   50% {
-    transform: translateY(-1px);
-    filter: drop-shadow(0 14px 28px var(--hn-callout-glow-strong));
+    filter: drop-shadow(0 16px 28px var(--hn-callout-glow-strong));
   }
 }
 
 @keyframes hnPromoTeaserGlow {
   0%, 100% {
-    transform: translateY(0);
     filter: drop-shadow(0 12px 20px var(--hn-promo-teaser-glow-soft));
   }
   50% {
-    transform: translateY(-2px);
     filter: drop-shadow(0 16px 28px var(--hn-promo-teaser-glow-strong));
   }
 }
@@ -264,11 +286,11 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
 .hn-form-logo { width: 45px; height: auto; opacity: 0.9; }
 .hn-disclaimer { font-size: 11px; color: #999; text-align: center; margin-top: 10px; line-height: 1.4; display: block !important; }
 
-#hn-chat-messages { display: none; flex: 1; padding: 24px !important; overflow-y: auto; flex-direction: column; gap: 16px; position: relative;}
-.hn-message { max-width: 85% !important; padding: 14px 18px !important; border-radius: 18px !important; font-size: 14px !important; line-height: 1.6 !important; word-wrap: break-word; white-space: pre-wrap; }
+#hn-chat-messages { display: none; flex: 1; padding: 14px 24px 20px !important; overflow-y: auto; flex-direction: column; gap: 14px; position: relative;}
+.hn-message { max-width: 85% !important; padding: 14px 18px !important; border-radius: 18px !important; font-size: 14px !important; line-height: 1.72 !important; letter-spacing: -0.005em; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; }
 .hn-message a { color: #2563eb !important; text-decoration: underline !important; font-weight: 600 !important; }
-.hn-user-message { background: var(--hn-header-color) !important; align-self: flex-end !important; color: #ffffff !important; border-bottom-right-radius: 4px !important; }
-.hn-ai-message { background: #ffffff !important; color: #1a1a1a !important; align-self: flex-start !important; border-bottom-left-radius: 4px !important; border: 1px solid rgba(0,0,0,0.05); }
+.hn-user-message { background: var(--hn-header-color) !important; align-self: flex-end !important; color: #ffffff !important; border-bottom-right-radius: 4px !important; max-width: 84% !important; }
+.hn-ai-message { background: #ffffff !important; color: #1a1a1a !important; align-self: flex-start !important; border-bottom-left-radius: 4px !important; border: 1px solid rgba(0,0,0,0.05); max-width: 90% !important; }
 .hn-promo-message { max-width: 92% !important; padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; }
 .hn-promo-preview-slot { display: none; margin-bottom: 6px; flex: 0 0 auto; }
 .hn-promo-card {
@@ -276,44 +298,47 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
   background: #ffffff;
   color: #1a1a1a;
   border: 1px solid rgba(0,0,0,0.06);
-  border-radius: 22px;
+  border-radius: var(--hn-promo-card-radius);
   box-shadow: 0 14px 36px rgba(15,23,42,0.10);
-  padding: 16px;
+  padding: 16px 16px 22px;
   overflow: hidden;
 }
 .hn-promo-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   color: #475569;
   margin-bottom: 10px;
 }
 .hn-promo-title {
   font-size: 18px;
-  line-height: 1.3;
+  line-height: 1.24;
   font-weight: 700;
+  letter-spacing: -0.018em;
   color: #0f172a;
   margin-bottom: 6px;
 }
 .hn-promo-offer {
   font-size: 14px;
+  line-height: 1.45;
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 8px;
 }
 .hn-promo-desc {
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.64;
+  letter-spacing: -0.005em;
   color: #475569;
   white-space: pre-wrap;
 }
 .hn-promo-helper {
   margin-top: 10px;
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: #64748b;
 }
 .hn-promo-image {
@@ -333,10 +358,12 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
   flex-wrap: wrap;
 }
 .hn-promo-countdown {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: #92400e;
-  background: #fff7d1;
+  letter-spacing: 0.01em;
+  color: var(--hn-promo-countdown-text);
+  background: var(--hn-promo-countdown-bg);
+  border: 1px solid var(--hn-promo-countdown-border);
   border-radius: 999px;
   padding: 7px 12px;
 }
@@ -348,6 +375,7 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
   padding: 11px 18px !important;
   font-size: 13px !important;
   font-weight: 700 !important;
+  letter-spacing: -0.01em;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -367,17 +395,18 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
 }
 .hn-promo-dismiss:hover { background: rgba(15,23,42,0.12); }
 .hn-promo-preview-slot .hn-promo-card {
-  padding: 14px;
-  border-radius: 20px;
+  padding: 14px 14px 18px;
+  border-radius: var(--hn-promo-card-radius);
 }
-.hn-promo-preview-slot .hn-promo-title { font-size: 16px; }
+.hn-promo-preview-slot .hn-promo-title { font-size: 16px; line-height: 1.22; }
 .hn-promo-preview-slot .hn-promo-offer {
   font-size: 13px;
+  line-height: 1.4;
   margin-bottom: 6px;
 }
 .hn-promo-preview-slot .hn-promo-desc {
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 .hn-promo-preview-slot .hn-promo-image {
   max-height: 180px;
@@ -394,7 +423,7 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
 }
 
 #hn-quick-replies-container { display: none; padding: 10px 24px 15px 24px; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.hn-qr-btn { background: #ffffff; border: 1px solid rgba(0,0,0,0.1); color: #1a1a1a; padding: 8px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.hn-qr-btn { background: #ffffff; border: 1px solid rgba(0,0,0,0.1); color: #1a1a1a; padding: 9px 14px; border-radius: 20px; font-size: 12px; line-height: 1.25; cursor: pointer; font-weight: 600; transition: 0.2s; }
 .hn-qr-btn:hover { background: var(--hn-header-color); color: #ffffff; }
 
 #hn-chat-input-area { display: none; padding: 15px 16px 10px 16px; gap: 8px; border-top: 1px solid rgba(0,0,0,0.05); align-items: flex-end; background: var(--hn-window-surface-bg);}
@@ -402,7 +431,7 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
     flex: 1; padding: 12px 14px !important; background: var(--hn-chat-input-bg) !important;
     border: 1px solid rgba(0,0,0,0.1) !important; border-radius: 20px !important;
     font-size: 14px !important; outline: none; resize: none; overflow: hidden !important;
-    max-height: 120px; font-family: inherit; line-height: 1.4; box-sizing: border-box;
+    max-height: 120px; font-family: inherit; line-height: 1.45; letter-spacing: -0.005em; box-sizing: border-box;
     -ms-overflow-style: none !important; scrollbar-width: none !important;
 }
 
@@ -414,7 +443,7 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
 .hn-icon-btn-send { background: var(--hn-header-color) !important; border: none !important; border-radius: 50% !important; width: 40px; height: 40px; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 2px;}
 
 #hn-powered-by { text-align: center; padding: 8px 0 16px 0; background: var(--hn-window-powered-bg); }
-#hn-powered-by a { color: #888888 !important; font-size: 10px !important; text-decoration: none !important; font-weight: 500 !important; display: flex; align-items: center; justify-content: center; gap: 4px; }
+#hn-powered-by a { color: #888888 !important; font-size: 10px !important; text-decoration: none !important; font-weight: 500 !important; letter-spacing: 0.01em; display: flex; align-items: center; justify-content: center; gap: 4px; }
 #hn-powered-by svg { fill: #888; width: 11px; height: 11px; }
 
 #hn-voice-overlay {
@@ -921,31 +950,51 @@ function hnGetWindowStyleTokens(style) {
             radius: "28px",
             borderWidth: "1px",
             shadow: "",
-            border: ""
+            border: "",
+            promoTeaserRadius: "22px",
+            promoTeaserMediaRadius: "16px",
+            promoTeaserImageRadius: "12px",
+            promoCardRadius: "22px"
         },
         "square": {
             radius: "0px",
             borderWidth: "1px",
             shadow: "0 18px 40px rgba(0,0,0,0.12)",
-            border: ""
+            border: "",
+            promoTeaserRadius: "0px",
+            promoTeaserMediaRadius: "0px",
+            promoTeaserImageRadius: "0px",
+            promoCardRadius: "0px"
         },
         "soft-rounded": {
             radius: "48px",
             borderWidth: "1px",
             shadow: "0 24px 60px rgba(0,0,0,0.12)",
-            border: ""
+            border: "",
+            promoTeaserRadius: "30px",
+            promoTeaserMediaRadius: "24px",
+            promoTeaserImageRadius: "20px",
+            promoCardRadius: "28px"
         },
         "bordered": {
             radius: "24px",
             borderWidth: "2px",
             shadow: "0 12px 28px rgba(15,23,42,0.07)",
-            border: "rgba(15,23,42,0.18)"
+            border: "rgba(15,23,42,0.18)",
+            promoTeaserRadius: "20px",
+            promoTeaserMediaRadius: "14px",
+            promoTeaserImageRadius: "10px",
+            promoCardRadius: "20px"
         },
         "shadowed": {
             radius: "28px",
             borderWidth: "1px",
             shadow: "0 30px 80px rgba(0,0,0,0.24)",
-            border: ""
+            border: "",
+            promoTeaserRadius: "22px",
+            promoTeaserMediaRadius: "16px",
+            promoTeaserImageRadius: "12px",
+            promoCardRadius: "22px"
         }
     };
     return tokenMap[style] || tokenMap[HN_WIDGET_DEFAULTS.widgetWindowStyle];
@@ -984,6 +1033,10 @@ function hnApplyWidgetSettings(settings) {
     widget.style.setProperty("--hn-window-border-width", windowStyle.borderWidth);
     widget.style.setProperty("--hn-window-shadow", windowStyle.shadow || windowLook.windowShadow);
     widget.style.setProperty("--hn-window-border", windowStyle.border || windowLook.windowBorder);
+    widget.style.setProperty("--hn-promo-teaser-radius", windowStyle.promoTeaserRadius || "22px");
+    widget.style.setProperty("--hn-promo-teaser-media-radius", windowStyle.promoTeaserMediaRadius || "16px");
+    widget.style.setProperty("--hn-promo-teaser-image-radius", windowStyle.promoTeaserImageRadius || "12px");
+    widget.style.setProperty("--hn-promo-card-radius", windowStyle.promoCardRadius || "22px");
 
     if (formLogo) formLogo.src = settings.widgetLogoUrl;
     if (bubbleLogo) bubbleLogo.src = settings.widgetLogoUrl;
@@ -1072,19 +1125,20 @@ function hnBuildPromoTeaserHtml(promo) {
     const title = hnEscapeHtml((promo.title || promo.offerDetails || promo.ctaText || "Special offer").toString().trim());
     const copy = hnEscapeHtml(hnBuildPromoTeaserText(promo));
     const kicker = hnEscapeHtml(hnBuildPromoTeaserKicker(promo));
+    const dismissBtn = promo.dismissible ? '<button class="hn-callout-promo-close" onclick="hnDismissPromo(event)" aria-label="Dismiss promotion">×</button>' : '';
     const media = promo.imageUrl
         ? '<div class="hn-callout-promo-media"><img src="' + hnEscapeHtml(promo.imageUrl) + '" alt="' + title + '"></div>'
         : '<div class="hn-callout-promo-media hn-callout-promo-media-placeholder"><span class="hn-callout-promo-icon">&#128227;</span></div>';
 
     return ''
         + '<div class="hn-callout-promo-inner">'
+        + dismissBtn
         + '<div class="hn-callout-promo-header">'
         + '<div class="hn-callout-promo-content">'
         + '<div class="hn-callout-promo-kicker">' + kicker + '</div>'
         + '<div class="hn-callout-promo-title">' + title + '</div>'
         + '<div class="hn-callout-promo-copy">' + copy + '</div>'
         + '</div>'
-        + '<div class="hn-callout-promo-arrow">&#8250;</div>'
         + '</div>'
         + media
         + '</div>';
@@ -1201,7 +1255,8 @@ function hnRenderPromoPreview(shouldShow) {
     hnEnsurePromoCountdownTimer();
 }
 
-function hnAppendPromoCard() {
+function hnAppendPromoCard(options) {
+    const keepTopVisible = !!(options && options.keepTopVisible);
     const container = document.getElementById("hn-chat-messages");
     const html = hnBuildPromoCardHtml(false);
     if (!container || !html) return;
@@ -1210,6 +1265,10 @@ function hnAppendPromoCard() {
     card.innerHTML = html;
     container.appendChild(card);
     hnEnsurePromoCountdownTimer();
+    if (keepTopVisible) {
+        hnScrollToTop();
+        return;
+    }
     hnScrollToBottom();
 }
 
@@ -1232,6 +1291,16 @@ function hnDismissPromo(event) {
     if (preview) {
         preview.innerHTML = "";
         preview.style.display = "none";
+    }
+    if (hnHasStartedChat && hnChatHistory.length === 0) {
+        const quickReplies = document.getElementById("hn-quick-replies-container");
+        if (hnCachedQuickReplies.length > 0) {
+            hnRenderQuickReplies();
+            if (quickReplies) quickReplies.style.display = "flex";
+        } else if (quickReplies) {
+            quickReplies.style.display = "none";
+        }
+        hnScrollToTop();
     }
     hnEnsurePromoCountdownTimer();
     hnConfigureAttentionFeature(hnWidgetSettings);
@@ -1360,6 +1429,14 @@ function hnScrollToBottom() {
     }
 }
 
+function hnScrollToTop() {
+    const container = document.getElementById("hn-chat-messages");
+    if (container) {
+        container.scrollTop = 0;
+        setTimeout(() => { container.scrollTop = 0; }, 30);
+    }
+}
+
 function hnLinkify(text) {
     const imgRegex = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
     let htmlText = text.replace(imgRegex, function(fullMatch, altText, imgUrl) {
@@ -1478,6 +1555,7 @@ function hnHandleCalloutClick() {
 function hnToggleChat() {
     const win = document.getElementById("hn-chat-window");
     const callout = document.getElementById("hn-chat-callout");
+    const openingPromoFirst = win.style.display !== "flex" && !hnHasStartedChat && hnShouldUsePromoEntry();
 
     if (win.style.display === "flex") {
         win.style.display = "none";
@@ -1489,7 +1567,11 @@ function hnToggleChat() {
     win.style.display = "flex";
     if (callout) callout.classList.remove("hn-show-callout");
     hnOpenChatExperience();
-    hnScrollToBottom();
+    if (openingPromoFirst) {
+        hnScrollToTop();
+    } else {
+        hnScrollToBottom();
+    }
 }
 
 function hnOpenChatExperience() {
@@ -1551,7 +1633,7 @@ function hnBeginChatSession(options) {
     }
 
     if (promoFirst) {
-        hnAppendPromoCard();
+        hnAppendPromoCard({ keepTopVisible: true });
     }
     if (!suppressWelcome) {
         hnAppendMessage(hnBuildWelcomeMessage(), "ai");
