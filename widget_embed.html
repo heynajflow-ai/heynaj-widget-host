@@ -8,6 +8,7 @@ z-index: 999999;
 animation: hnWidgetSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 3.5s both;
 --hn-header-color: #1a1a1a;
 --hn-callout-border-color: #ffdc32;
+--hn-promo-teaser-border-color: #ffdc32;
 --hn-callout-bg: #ffffff;
 --hn-window-bg: rgba(255, 255, 255, 0.85);
 --hn-window-border: rgba(255, 255, 255, 0.5);
@@ -38,56 +39,71 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
 }
 
 .hn-callout-promo {
-  width: min(348px, calc(100vw - 24px));
+  width: min(392px, calc(100vw - 24px));
   padding: 0 !important;
-  border-radius: 22px !important;
+  border-radius: 24px !important;
   white-space: normal !important;
   overflow: hidden;
+  border-color: var(--hn-promo-teaser-border-color) !important;
+  border-width: 2px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%) !important;
+  box-shadow: 0 18px 42px rgba(15,23,42,0.14) !important;
 }
 .hn-callout-promo-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(96px, 118px) minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 9px 10px 9px 9px;
+  gap: 12px;
+  padding: 12px 14px 12px 12px;
 }
 .hn-callout-promo-media {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 100%;
+  height: 92px;
+  border-radius: 16px;
   flex: 0 0 auto;
-  background: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72), 0 10px 24px rgba(15,23,42,0.10);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
 }
 .hn-callout-promo-media img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
+  display: block;
+}
+.hn-callout-promo-media-placeholder {
+  background: linear-gradient(135deg, #fff7d1 0%, #ffffff 55%, #f8fafc 100%);
+}
+.hn-callout-promo-icon {
+  font-size: 30px;
+  line-height: 1;
 }
 .hn-callout-promo-content {
   min-width: 0;
-  flex: 1;
-  padding-right: 2px;
+  padding-right: 0;
 }
 .hn-callout-promo-kicker {
-  font-size: 8px;
+  font-size: 9px;
   line-height: 1.2;
   font-weight: 800;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #64748b;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 .hn-callout-promo-title {
-  font-size: 12px;
-  line-height: 1.16;
+  font-size: 14px;
+  line-height: 1.18;
   font-weight: 800;
   color: #0f172a;
-  margin-bottom: 1px;
+  margin-bottom: 4px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -95,9 +111,9 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   word-break: break-word;
 }
 .hn-callout-promo-copy {
-  font-size: 10px;
-  line-height: 1.24;
-  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.36;
+  font-weight: 600;
   color: #334155;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -106,11 +122,29 @@ white-space: nowrap !important; cursor: pointer; transition: all 0.3s ease; opac
   word-break: break-word;
 }
 .hn-callout-promo-arrow {
-  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.06);
+  font-size: 18px;
   line-height: 1;
   color: #0f172a;
   flex: 0 0 auto;
-  margin-left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0;
+}
+@media (max-width: 420px) {
+  .hn-callout-promo { width: min(360px, calc(100vw - 20px)); }
+  .hn-callout-promo-inner {
+    grid-template-columns: minmax(84px, 102px) minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px 12px 10px 10px;
+  }
+  .hn-callout-promo-media { height: 84px; border-radius: 14px; }
+  .hn-callout-promo-title { font-size: 13px; }
+  .hn-callout-promo-copy { font-size: 10.5px; }
 }
 
 .hn-show-callout { opacity: 1 !important; visibility: visible !important; }
@@ -477,6 +511,8 @@ const HN_WIDGET_DEFAULTS = {
     promo: {
         entryMode: "callout-trigger",
         type: "promotion",
+        teaserBorderColor: "#ffdc32",
+        teaserAnimation: "breathing",
         imageUrl: "",
         title: "",
         offerDetails: "",
@@ -616,11 +652,26 @@ function hnNormalizeWidgetSettings(data) {
         widgetWindowStyle: hnNormalizeWindowStyle(incoming.widgetWindowStyle || data.widgetWindowStyle || HN_WIDGET_DEFAULTS.widgetWindowStyle),
         calloutText: incoming.calloutText || data.calloutText || HN_WIDGET_DEFAULTS.calloutText,
         calloutBorderColor: incoming.calloutBorderColor || data.calloutBorderColor || HN_WIDGET_DEFAULTS.calloutBorderColor,
-        calloutAnimation: (incoming.calloutAnimation || data.calloutAnimation || HN_WIDGET_DEFAULTS.calloutAnimation).toString().toLowerCase(),
+        calloutAnimation: hnNormalizeCalloutAnimation(incoming.calloutAnimation || data.calloutAnimation || HN_WIDGET_DEFAULTS.calloutAnimation),
         calloutDelaySeconds: Number(incoming.calloutDelaySeconds || data.calloutDelaySeconds || HN_WIDGET_DEFAULTS.calloutDelaySeconds) || HN_WIDGET_DEFAULTS.calloutDelaySeconds,
         calloutStyle: (incoming.calloutStyle || data.calloutStyle || HN_WIDGET_DEFAULTS.calloutStyle).toString().toLowerCase(),
         bookingLink: data.bookingLink || HN_WIDGET_DEFAULTS.bookingLink,
         promo: Object.assign({}, promo, {
+            teaserBorderColor:
+                incomingPromo.teaserBorderColor ||
+                data.promoTeaserBorderColor ||
+                incoming.calloutBorderColor ||
+                data.calloutBorderColor ||
+                HN_WIDGET_DEFAULTS.promo.teaserBorderColor ||
+                HN_WIDGET_DEFAULTS.calloutBorderColor,
+            teaserAnimation: hnNormalizeCalloutAnimation(
+                incomingPromo.teaserAnimation ||
+                data.promoTeaserAnimation ||
+                incoming.calloutAnimation ||
+                data.calloutAnimation ||
+                HN_WIDGET_DEFAULTS.promo.teaserAnimation ||
+                HN_WIDGET_DEFAULTS.calloutAnimation
+            ),
             isActive: hasServerPromoActive
                 ? (incomingPromo.isActive === true || String(incomingPromo.isActive).toLowerCase() === "true")
                 : hnIsPromoActive(attentionMode, promo)
@@ -652,6 +703,18 @@ function hnNormalizePromoType(value) {
     if (normalized === "event") return "event";
     if (normalized === "announcement") return "announcement";
     return "promotion";
+}
+
+function hnNormalizeCalloutAnimation(value) {
+    const normalized = (value || "").toString().trim().toLowerCase();
+    const map = {
+        "breathing": "breathing",
+        "none": "none",
+        "float": "float",
+        "bounce": "bounce",
+        "glow": "glow"
+    };
+    return map[normalized] || HN_WIDGET_DEFAULTS.calloutAnimation;
 }
 
 function hnNormalizePromoCtaType(value) {
@@ -835,6 +898,7 @@ function hnApplyWidgetSettings(settings) {
 
     widget.style.setProperty("--hn-header-color", settings.widgetHeaderColor);
     widget.style.setProperty("--hn-callout-border-color", settings.calloutBorderColor);
+    widget.style.setProperty("--hn-promo-teaser-border-color", (settings.promo && settings.promo.teaserBorderColor) || settings.calloutBorderColor);
     widget.style.setProperty("--hn-window-bg", windowLook.windowBg);
     widget.style.setProperty("--hn-window-border", windowLook.windowBorder);
     widget.style.setProperty("--hn-window-shadow", windowLook.windowShadow);
@@ -878,7 +942,7 @@ function hnConfigureAttentionFeature(settings) {
     if (settings.attentionMode === "promotion" && settings.promo && settings.promo.isActive) {
         if (settings.promo.entryMode === "callout-trigger" && !hnPromoDismissed) {
             callout.innerHTML = hnBuildPromoTeaserHtml(settings.promo);
-            callout.className = "hn-callout-promo hn-callout-animate-" + settings.calloutAnimation;
+            callout.className = "hn-callout-promo hn-callout-animate-" + settings.promo.teaserAnimation;
             hnScheduleCallout(settings.calloutDelaySeconds);
             return;
         }
@@ -917,23 +981,35 @@ function hnScheduleCallout(delaySeconds) {
 }
 
 function hnBuildPromoTeaserText(promo) {
-    const base = (promo.offerDetails || promo.title || promo.ctaText || "Special offer available").toString().trim();
-    return base.length > 34 ? base.substring(0, 31) + "..." : base;
+    if (!promo) return "Tap to preview this offer.";
+    const title = (promo.title || "").toString().trim();
+    const offerDetails = (promo.offerDetails || "").toString().trim();
+    const description = (promo.description || "").toString().trim();
+    const base = (description || (offerDetails && offerDetails !== title ? offerDetails : "") || promo.ctaText || "Tap to preview this offer.").toString().trim();
+    return base.length > 92 ? base.substring(0, 89).trimEnd() + "..." : base;
+}
+
+function hnBuildPromoTeaserKicker(promo) {
+    if (!promo) return "Live promo";
+    if (promo.type === "event") return "Live event";
+    if (promo.type === "announcement") return "Latest update";
+    return "Live promo";
 }
 
 function hnBuildPromoTeaserHtml(promo) {
     if (!promo) return "";
-    const title = hnEscapeHtml(promo.title || promo.ctaText || "Special offer");
-    const copy = hnEscapeHtml(promo.offerDetails || promo.description || "Tap to preview this offer.");
+    const title = hnEscapeHtml((promo.title || promo.offerDetails || promo.ctaText || "Special offer").toString().trim());
+    const copy = hnEscapeHtml(hnBuildPromoTeaserText(promo));
+    const kicker = hnEscapeHtml(hnBuildPromoTeaserKicker(promo));
     const media = promo.imageUrl
         ? '<div class="hn-callout-promo-media"><img src="' + hnEscapeHtml(promo.imageUrl) + '" alt="' + title + '"></div>'
-        : '<div class="hn-callout-promo-media"><span class="hn-callout-promo-arrow">&#128227;</span></div>';
+        : '<div class="hn-callout-promo-media hn-callout-promo-media-placeholder"><span class="hn-callout-promo-icon">&#128227;</span></div>';
 
     return ''
         + '<div class="hn-callout-promo-inner">'
         + media
         + '<div class="hn-callout-promo-content">'
-        + '<div class="hn-callout-promo-kicker">Live promo</div>'
+        + '<div class="hn-callout-promo-kicker">' + kicker + '</div>'
         + '<div class="hn-callout-promo-title">' + title + '</div>'
         + '<div class="hn-callout-promo-copy">' + copy + '</div>'
         + '</div>'
