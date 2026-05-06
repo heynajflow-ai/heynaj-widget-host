@@ -495,7 +495,26 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
 }
 
 #hn-voice-status { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 10px; letter-spacing: 0.5px;}
-#hn-voice-transcript { font-size: 14px; color: #666; max-width: 80%; text-align: center; min-height: 40px; font-style: italic; line-height: 1.5;}
+#hn-voice-transcript {
+    font-size: 14px;
+    color: #666;
+    width: min(84%, 340px);
+    max-width: 84%;
+    text-align: center;
+    min-height: 40px;
+    font-style: italic;
+    line-height: 1.5;
+    transition: font-size 0.2s ease, color 0.2s ease;
+}
+#hn-voice-transcript.hn-voice-transcript-active {
+    font-size: 13px;
+    line-height: 1.52;
+    color: #5b6472;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 #hn-voice-send-btn {
     display: none; background: var(--hn-header-color) !important; color: #ffffff !important;
     padding: 12px 28px !important; border-radius: 24px !important;
@@ -630,7 +649,7 @@ if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
         hnVoiceUiBusy = false;
         document.getElementById("hn-main-orb").className = "hn-orb hn-orb-listening";
         document.getElementById("hn-voice-status").innerText = "Listening...";
-        document.getElementById("hn-voice-transcript").innerText = "";
+        hnSetVoiceTranscript("");
         document.getElementById("hn-voice-send-btn").style.display = "none";
         if (hnCurrentAudio) { hnCurrentAudio.pause(); hnCurrentAudio = null; }
     };
@@ -649,7 +668,7 @@ if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
 
         const displayText = hnFullTranscript + interimTranscript;
         const input = document.getElementById("hn-chat-input");
-        document.getElementById("hn-voice-transcript").innerText = displayText;
+        hnSetVoiceTranscript(displayText, "active");
         input.value = displayText;
         hnHandleInput(input);
 
@@ -1413,9 +1432,34 @@ function hnSendVoiceNow() {
     hnSendMessage();
 }
 
+function hnSetVoiceTranscript(text, mode) {
+    const transcriptEl = document.getElementById("hn-voice-transcript");
+    if (!transcriptEl) return;
+
+    const activeMode = mode === "active" || mode === "speaking";
+    transcriptEl.classList.toggle("hn-voice-transcript-active", activeMode);
+    transcriptEl.innerText = text || "";
+}
+
+function hnBuildVoiceSpeakingPreview(reply) {
+    const normalized = (reply || "").toString().replace(/\s+/g, " ").trim();
+    if (!normalized) return "";
+
+    const sentences = normalized.match(/[^.!?]+[.!?]+["')\]]*|[^.!?]+$/g) || [normalized];
+    const preview = sentences.slice(0, 3).join(" ").trim();
+    if (!preview) return normalized;
+
+    if (sentences.length <= 3 && preview.length >= normalized.length) {
+        return preview;
+    }
+
+    return preview.replace(/[.!?]+$/, "").trim() + "...";
+}
+
 function hnResetOrbState() {
     document.getElementById("hn-main-orb").className = "hn-orb";
     document.getElementById("hn-voice-status").innerText = "Tap orb to speak";
+    hnSetVoiceTranscript("");
     document.getElementById("hn-voice-send-btn").style.display = "none";
     hnVoiceUiBusy = false;
     hnVoiceSendLocked = false;
@@ -1697,7 +1741,7 @@ async function hnSendMessage() {
         if (data.audioBase64 && document.getElementById("hn-voice-overlay").style.display === "flex") {
             document.getElementById("hn-main-orb").className = "hn-orb hn-orb-speaking";
             document.getElementById("hn-voice-status").innerText = "Speaking...";
-            document.getElementById("hn-voice-transcript").innerText = data.reply;
+            hnSetVoiceTranscript(hnBuildVoiceSpeakingPreview(data.reply), "speaking");
             document.getElementById("hn-voice-send-btn").style.display = "none";
             hnVoiceUiBusy = true;
 
