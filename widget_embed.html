@@ -452,6 +452,16 @@ font-weight: 600 !important; font-size: 16px !important; display: flex; justify-
     z-index: 100; flex-direction: column; align-items: center; justify-content: center;
     animation: hnFadeIn 0.3s ease;
 }
+#hn-voice-overlay::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--hn-window-overlay-bg);
+    pointer-events: none;
+}
 
 @keyframes hnFadeIn {
   from { opacity: 0; }
